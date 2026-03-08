@@ -51,6 +51,21 @@ Two Docker networks are used:
 
 `db` and `redis` are never exposed to the host or the internet.
 
+## Authentication
+
+All API endpoints are protected with an API key. Pass it in the request header:
+
+```
+X-API-Key: your-secret-api-key
+```
+
+Example:
+```bash
+curl -H "X-API-Key: your-secret-api-key" http://localhost:8000/users/
+```
+
+Without a valid key the API returns `401 Unauthorized`.
+
 ## Quick Start
 
 ### Requirements
@@ -69,7 +84,7 @@ cd user-information-aggregator
 
 ```bash
 cp .env.example .env
-# Edit .env if you want to change passwords
+# Edit .env — set a strong API_KEY and change passwords
 ```
 
 ### 3. Build images
@@ -101,6 +116,8 @@ Data will appear in the database automatically after the first Celery Beat trigg
 
 ## API Endpoints
 
+All endpoints require `X-API-Key` header.
+
 | Method | URL | Description |
 |--------|-----|-------------|
 | GET | `/` | Health check |
@@ -118,11 +135,13 @@ GET /posts/?page=2&page_size=10
 
 ## Task Schedule
 
-| Task | Schedule | Records |
+Configurable via `.env`:
+
+| Task | Variable | Default |
 |------|----------|---------|
-| Users | every 10 min | 208 |
-| Posts | every 15 min | 251 |
-| Comments | every 20 min | 340 |
+| Users | `FETCH_USERS_INTERVAL` | 10 min |
+| Posts | `FETCH_POSTS_INTERVAL` | 15 min |
+| Comments | `FETCH_COMMENTS_INTERVAL` | 20 min |
 
 ## Tests & Linter
 
@@ -186,7 +205,9 @@ docker compose down -v
 
 ```
 app/
-├── api/routes/          # FastAPI routes (users, posts)
+├── api/
+│   ├── dependencies.py  # API key authentication
+│   └── routes/          # FastAPI routes (users, posts)
 ├── celery/
 │   ├── celery_app.py    # Celery config + beat schedule
 │   └── tasks/           # user_tasks, post_tasks, comment_tasks
@@ -206,6 +227,7 @@ alembic/                 # Migration config (versions are generated locally)
 ## Security
 
 - Containers run as unprivileged `appuser`
+- All API endpoints protected with API key (`X-API-Key` header)
 - `.env` is not committed to git
 - `db` and `redis` are on an internal Docker network — not reachable from outside
 - Only `api` (8000) and `flower` (5555) are exposed to the host
