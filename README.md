@@ -33,14 +33,14 @@ Master Task ──► fan-out ──► Chunk Tasks (parallel)
 
 ## Services
 
-| Service | External Port | Description |
-|---------|--------------|-------------|
-| api | 8000 | FastAPI REST API + Swagger UI |
-| worker | — | Celery workers (2 concurrent) |
-| beat | — | Celery scheduler |
-| flower | 5555 | Celery task monitoring |
-| db | — | PostgreSQL 15 (internal only) |
-| redis | — | Redis 7 (internal only) |
+| Service | External Port | Description                   |
+| ------- | ------------- | ----------------------------- |
+| api     | 8000          | FastAPI REST API + Swagger UI |
+| worker  | —             | Celery workers (2 concurrent) |
+| beat    | —             | Celery scheduler              |
+| flower  | 5555          | Celery task monitoring        |
+| db      | —             | PostgreSQL 15 (internal only) |
+| redis   | —             | Redis 7 (internal only)       |
 
 ## Network
 
@@ -60,6 +60,7 @@ X-API-Key: your-secret-api-key
 ```
 
 Example:
+
 ```bash
 curl -H "X-API-Key: your-secret-api-key" http://localhost:8000/users/
 ```
@@ -76,7 +77,8 @@ Without a valid key the API returns `401 Unauthorized`.
 ### 1. Clone the repository
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Narberal90/user-information-aggregator.git
+
 cd user-information-aggregator
 ```
 
@@ -112,19 +114,19 @@ docker compose up -d
 
 ---
 
-Data will appear in the database automatically after the first Celery Beat trigger (within 20 minutes).
+Data will appear in the database automatically after the first Celery Beat trigger (within 20 minutes), or you can change the relevant keys in the .env file before building Docker for faster results.
 
 ## API Endpoints
 
 All endpoints require `X-API-Key` header.
 
-| Method | URL | Description |
-|--------|-----|-------------|
-| GET | `/` | Health check |
-| GET | `/users/` | Paginated list of users |
-| GET | `/users/{id}` | User with posts and comments |
-| GET | `/posts/` | Paginated list of posts |
-| GET | `/posts/{id}` | Post with comments |
+| Method | URL           | Description                  |
+| ------ | ------------- | ---------------------------- |
+| GET    | `/`           | Health check                 |
+| GET    | `/users/`     | Paginated list of users      |
+| GET    | `/users/{id}` | User with posts and comments |
+| GET    | `/posts/`     | Paginated list of posts      |
+| GET    | `/posts/{id}` | Post with comments           |
 
 ### Pagination
 
@@ -137,11 +139,11 @@ GET /posts/?page=2&page_size=10
 
 Configurable via `.env`:
 
-| Task | Variable | Default |
-|------|----------|---------|
-| Users | `FETCH_USERS_INTERVAL` | 10 min |
-| Posts | `FETCH_POSTS_INTERVAL` | 15 min |
-| Comments | `FETCH_COMMENTS_INTERVAL` | 20 min |
+| Task     | Variable                  | Default |
+| -------- | ------------------------- | ------- |
+| Users    | `FETCH_USERS_INTERVAL`    | 10 min  |
+| Posts    | `FETCH_POSTS_INTERVAL`    | 15 min  |
+| Comments | `FETCH_COMMENTS_INTERVAL` | 20 min  |
 
 ## Tests & Linter
 
@@ -228,6 +230,14 @@ alembic/                 # Migration config (versions are generated locally)
 
 - Containers run as unprivileged `appuser`
 - All API endpoints protected with API key (`X-API-Key` header)
-- `.env` is not committed to git
 - `db` and `redis` are on an internal Docker network — not reachable from outside
 - Only `api` (8000) and `flower` (5555) are exposed to the host
+
+## Live Demo (Deployed on AWS)
+
+The service is running on an AWS EC2 instance. Access via the browser:
+
+- **Swagger UI (API Docs)**: http://18.197.155.34:8000/docs
+- **Flower (Celery Task Monitoring)**: http://18.197.155.34:5555
+
+_(To interact with the API via Swagger UI, you will need to click "Authorize" and provide the valid `X-API-Key`)._
