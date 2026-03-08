@@ -203,29 +203,6 @@ docker compose run --rm migrate alembic current
 docker compose down -v
 ```
 
-## Project Structure
-
-```
-app/
-├── api/
-│   ├── dependencies.py  # API key authentication
-│   └── routes/          # FastAPI routes (users, posts)
-├── celery/
-│   ├── celery_app.py    # Celery config + beat schedule
-│   └── tasks/           # user_tasks, post_tasks, comment_tasks
-├── db/
-│   ├── database.py      # SQLAlchemy engine + session
-│   └── repositories.py  # Repository pattern
-├── models/models.py     # SQLAlchemy models (User, Post, Comment)
-├── schemas/schemas.py   # Pydantic schemas
-├── services/
-│   └── api_clients.py   # HTTP client for DummyJSON API
-├── tests/               # pytest tests
-└── main.py              # FastAPI app
-alembic/                 # Migration config (versions are generated locally)
-.env.example             # Environment variables template
-```
-
 ## Security
 
 - Containers run as unprivileged `appuser`
