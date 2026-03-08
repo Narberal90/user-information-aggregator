@@ -33,14 +33,23 @@ Master Task ──► fan-out ──► Chunk Tasks (parallel)
 
 ## Services
 
-| Service | Port | Description |
-|---------|------|-------------|
+| Service | External Port | Description |
+|---------|--------------|-------------|
 | api | 8000 | FastAPI REST API + Swagger UI |
 | worker | — | Celery workers (2 concurrent) |
 | beat | — | Celery scheduler |
 | flower | 5555 | Celery task monitoring |
-| db | 5432 | PostgreSQL 15 |
-| redis | — | Redis 7 (broker + result backend) |
+| db | — | PostgreSQL 15 (internal only) |
+| redis | — | Redis 7 (internal only) |
+
+## Network
+
+Two Docker networks are used:
+
+- **`frontend`** — external-facing services: `api`, `worker`, `beat`, `flower`
+- **`backend`** (internal) — isolated from the outside world: `db`, `redis`
+
+`db` and `redis` are never exposed to the host or the internet.
 
 ## Quick Start
 
@@ -198,5 +207,5 @@ alembic/                 # Migration config (versions are generated locally)
 
 - Containers run as unprivileged `appuser`
 - `.env` is not committed to git
-- Redis is not exposed externally — only accessible inside the Docker network
-- PostgreSQL exposes port 5432 for local development only
+- `db` and `redis` are on an internal Docker network — not reachable from outside
+- Only `api` (8000) and `flower` (5555) are exposed to the host
