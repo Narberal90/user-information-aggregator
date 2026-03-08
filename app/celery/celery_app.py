@@ -27,16 +27,16 @@ app.conf.update(
 )
 
 app.conf.beat_schedule = {
-    "fetch-users-every-10-mins": {
+    "fetch-users": {
         "task": "app.celery.tasks.user_tasks.master_fetch_users_task",
-        "schedule": crontab(minute="*/10"),
+        "schedule": crontab(minute=f"*/{settings.fetch_users_interval}"),
     },
-    "fetch-posts-every-15-mins": {
+    "fetch-posts": {
         "task": "app.celery.tasks.post_tasks.master_fetch_posts_task",
-        "schedule": crontab(minute="*/15"),
+        "schedule": crontab(minute=f"*/{settings.fetch_posts_interval}"),
     },
-    "fetch-comments-every-20-mins": {
+    "fetch-comments": {
         "task": "app.celery.tasks.comment_tasks.master_fetch_comments_task",
-        "schedule": crontab(minute="*/20"),
+        "schedule": crontab(minute=f"*/{settings.fetch_comments_interval}"),
     },
 }

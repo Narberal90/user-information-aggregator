@@ -11,8 +11,8 @@ class TestUsersAPI:
 
     def test_list_users_with_data(self, client, db):
         repo = UserRepository(db)
-        repo.upsert({"external_id": 1, "name": "Alice", "email": "a@a.com"})
-        repo.upsert({"external_id": 2, "name": "Bob", "email": "b@b.com"})
+        repo.upsert({"external_id": 1, "name": "IronMan", "email": "ironman@stark.com"})
+        repo.upsert({"external_id": 2, "name": "Kirito", "email": "kirito@sao.com"})
 
         response = client.get("/users/")
         assert response.status_code == 200
@@ -38,11 +38,11 @@ class TestUsersAPI:
 
     def test_get_user_by_id(self, client, db):
         repo = UserRepository(db)
-        user = repo.upsert({"external_id": 1, "name": "Alice"})
+        user = repo.upsert({"external_id": 1, "name": "IronMan"})
 
         response = client.get(f"/users/{user.id}")
         assert response.status_code == 200
-        assert response.json()["name"] == "Alice"
+        assert response.json()["name"] == "IronMan"
 
     def test_invalid_pagination_params(self, client):
         response = client.get("/users/?page=0&page_size=10")
@@ -52,7 +52,7 @@ class TestUsersAPI:
 class TestPostsAPI:
     def _create_user_and_post(self, db):
         user_repo = UserRepository(db)
-        user = user_repo.upsert({"external_id": 1, "name": "Alice"})
+        user = user_repo.upsert({"external_id": 1, "name": "Kirito"})
         post_repo = PostRepository(db)
         post = post_repo.upsert({"external_id": 1, "user_id": user.id, "title": "Test Post", "body": "Body"})
         return user, post

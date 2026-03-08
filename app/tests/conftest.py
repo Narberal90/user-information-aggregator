@@ -10,6 +10,10 @@ os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 os.environ["REDIS_URL"] = "redis://localhost:6379/0"
 os.environ["API_BASE_URL"] = "https://dummyjson.com"
 os.environ["FETCH_CHUNK_SIZE"] = "10"
+os.environ["API_KEY"] = "test-api-key"
+os.environ["FETCH_USERS_INTERVAL"] = "10"
+os.environ["FETCH_POSTS_INTERVAL"] = "15"
+os.environ["FETCH_COMMENTS_INTERVAL"] = "20"
 
 from app.db.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
@@ -42,6 +46,6 @@ def client(db):
             pass
 
     app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as c:
+    with TestClient(app, headers={"X-API-Key": "test-api-key"}) as c:
         yield c
     app.dependency_overrides.clear()

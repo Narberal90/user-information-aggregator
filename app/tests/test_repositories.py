@@ -6,22 +6,22 @@ class TestUserRepository:
         repo = UserRepository(db)
         user = repo.upsert({
             "external_id": 1,
-            "name": "Alice",
-            "email": "alice@example.com",
-            "username": "alice",
+            "name": "IronMan",
+            "email": "ironman@stark.com",
+            "username": "ironman",
             "phone": "123",
-            "website": "alice.io",
+            "website": "stark.io",
         })
         assert user.id is not None
-        assert user.name == "Alice"
+        assert user.name == "IronMan"
         assert user.external_id == 1
 
     def test_upsert_updates_existing_user(self, db):
         repo = UserRepository(db)
-        repo.upsert({"external_id": 1, "name": "Alice", "email": "old@example.com"})
-        updated = repo.upsert({"external_id": 1, "name": "Alice Updated", "email": "new@example.com"})
-        assert updated.name == "Alice Updated"
-        assert updated.email == "new@example.com"
+        repo.upsert({"external_id": 1, "name": "IronMan", "email": "old@stark.com"})
+        updated = repo.upsert({"external_id": 1, "name": "IronMan Updated", "email": "new@stark.com"})
+        assert updated.name == "IronMan Updated"
+        assert updated.email == "new@stark.com"
 
     def test_get_by_external_id_returns_none_for_missing(self, db):
         repo = UserRepository(db)
@@ -39,15 +39,15 @@ class TestUserRepository:
 
     def test_get_by_id_returns_correct_user(self, db):
         repo = UserRepository(db)
-        created = repo.upsert({"external_id": 42, "name": "Bob"})
+        created = repo.upsert({"external_id": 42, "name": "Kirito"})
         found = repo.get_by_id(created.id)
         assert found is not None
-        assert found.name == "Bob"
+        assert found.name == "Kirito"
 
 
 class TestPostRepository:
     def _create_user(self, db):
-        return UserRepository(db).upsert({"external_id": 1, "name": "Alice"})
+        return UserRepository(db).upsert({"external_id": 1, "name": "IronMan"})
 
     def test_upsert_creates_new_post(self, db):
         user = self._create_user(db)
@@ -90,7 +90,7 @@ class TestPostRepository:
 
 class TestCommentRepository:
     def _create_post(self, db):
-        user = UserRepository(db).upsert({"external_id": 1, "name": "Alice"})
+        user = UserRepository(db).upsert({"external_id": 1, "name": "Kirito"})
         return PostRepository(db).upsert({"external_id": 1, "user_id": user.id, "title": "Post", "body": ""})
 
     def test_upsert_creates_comment(self, db):
