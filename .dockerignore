@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Git
+.git/
+
+# Environment — секрети не потрапляють в образ
+.env
+
+# Pytest cache
+.pytest_cache/
+.coverage
+test.db
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Ruff
+.ruff_cache/
+
+# Readme — не потрібен в образі
+README.md
